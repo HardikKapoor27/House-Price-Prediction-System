@@ -1,3 +1,8 @@
+--no-cache-dir
+--trusted-host pypi.org
+--trusted-host pypi.python.org
+--trusted-host files.pythonhosted.org
+
 flask
 requests
 numpy
