@@ -1,0 +1,10 @@
+flask
+numpy
+pandas
+scikit-learn
+Flask
+jsonify
+request
+util
+pickle
+json
