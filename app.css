@@ -1,0 +1,349 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    color: #333;
+    background: transparent;
+    overflow-y: scroll; /* Allows scrolling for the container */
+}
+
+.background {
+    background: url('https://wallpaperaccess.com/full/4401476.jpg');
+    background-size: cover;
+    background-position: center;
+    filter: blur(0) brightness();
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
+/* .container {
+    padding: 20px 15px; /* Adds spacing inside container 
+    max-width: 600px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+*/
+
+.container {
+    padding: 20px 15px; /* Adds spacing inside container */
+    max-width: 1100px; /* Ensures all pages have consistent width */
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.app-container {
+    padding: 20px 15px; /* Adds spacing inside container */
+    max-width: 800px; /* Ensures all pages have consistent width */
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.main-heading {
+    text-align: center;
+    font-size: 3.5rem;
+    color: whitesmoke;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.8);
+    font-weight: 700;
+    margin: 20px 0; /* Space between heading and content */
+}
+
+/* .form {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 15px;
+    padding: 30px 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    width: 100%;
+} */
+
+.form {
+    background: rgba(255, 255, 255, 0.7); /* Adjusted transparency */
+    border-radius: 15px;
+    padding: 30px 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    margin: 20px auto;
+}
+
+
+.location, .submit {
+    font-family: 'Poppins', sans-serif;
+    width: 100%;
+    border: 1px solid #ddd;
+    margin: 10px 0;
+    padding: 15px;
+    font-size: 16px;
+    border-radius: 8px;
+    background: #f9f9f9;
+}
+
+.area {
+    font-family: 'Poppins', sans-serif;
+    width: 95%;
+    border: 1px solid #ddd;
+    margin: 10px 0;
+    padding: 15px;
+    font-size: 16px;
+    border-radius: 8px;
+    background: #f9f9f9;
+}
+
+.area:focus, .location:focus {
+    border: 1px solid rgb(17, 116, 214);
+    outline: none;
+    background: #ffffff;
+}
+
+.submit {
+    background: black;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    transition: transform 0.3s ease;
+}
+
+.submit:hover {
+    background: black;
+    transform: scale(1.05);
+}
+
+.result {
+    background: rgb(17, 116, 214);
+    color: white;
+    border: none;
+    padding: 15px;
+    font-weight: bold;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.switch-field {
+    display: flex;
+    justify-content: space-between;
+    margin: 15px 0;
+}
+
+.switch-field input {
+    display: none;
+}
+
+.switch-field label {
+    flex: 1;
+    text-align: center;
+    padding: 12px;
+    margin: 0 5px;
+    border-radius: 8px;
+    background: #f0f0f0;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+.switch-field label:hover {
+    background: #e4e4e4;
+}
+
+.switch-field input:checked + label {
+    background: rgb(17, 116, 214);
+    color: white;
+    font-weight: bold;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Navbar Styles */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.nav-left {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    height: 50px;
+    margin-right: 10px;
+}
+
+.nav-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.5rem;
+    color: black;
+    font-weight: bold;
+}
+
+.nav-right {
+    display: flex;
+    gap: 15px;
+}
+
+.nav-button {
+    font-family: 'Poppins', sans-serif;
+    text-decoration: none;
+    font-size: 14px;
+    color: black;
+    background: #f9f9f9;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.nav-button:hover {
+    background: rgb(17, 116, 214);
+    color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Content Styles */
+.content {
+    text-align: center;
+    margin-top: 20px;
+    background: rgba(255, 255, 255, 0.7);
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.content p {
+    font-size: 1rem;
+    color: #333;
+    line-height: 1.6;
+}
+
+.cta-section {
+    margin-top: 20px;
+}
+
+.cta-section h2 {
+    font-size: 1.5rem;
+    color: black;
+    margin-bottom: 15px;
+}
+
+.cta-button {
+    font-family: 'Poppins', sans-serif;
+    text-decoration: none;
+    font-size: 16px;
+    color: white;
+    background: rgb(17, 116, 214);
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.cta-button:hover {
+    background: black;
+    transform: scale(1.05);
+}
+
+.nav-button.active {
+    background: rgb(17, 116, 214);
+    color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.home-main-heading {
+    text-align: center;
+    font-size: 3rem;
+    color: rgb(17, 116, 214);
+    margin-bottom: 20px;
+}
+
+.home-sub-heading-title {
+    font-size: 2rem;
+    color: black;
+    margin-top: 30px;
+    text-align: center;
+}
+
+.home-sub-heading {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    color: darkgray;
+    text-align: justify;
+    margin-top: 10px;
+}
+
+ul.home-sub-heading {
+    margin-top: 15px;
+    margin-left: 20px;
+}
+
+ul.home-sub-heading li {
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+    color: #333;
+}
+
+/* ------ */
+
+/* Contact Us Page Styles */
+.team {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px; /* Ensures space between developer sections */
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.developer {
+    text-align: center;
+    width: 300px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.contact-container {
+    padding: 20px 15px; /* Adds spacing inside container */
+    max-width: 800px; /* Ensures all pages have consistent width */
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.photo {
+    width: 150px;
+    height: 150px;
+    margin-bottom: 15px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 4px solid rgb(17, 116, 214);
+}
+
+.photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.info p {
+    font-size: 1rem;
+    color: #555;
+    margin: 5px 0;
+    white-space: nowrap;
+}
+
+.info p strong {
+    color: #111;
+}
