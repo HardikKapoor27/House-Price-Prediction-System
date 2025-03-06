@@ -26,7 +26,7 @@ function getBathValue() {
     var location = document.getElementById("uiLocations");
     var estPrice = document.getElementById("uiEstimatedPrice");
   
-    var url = "https://house-price-prediction-system-503i.onrender.com/get_location_names"; 
+    var url = "https://house-price-prediction-system-503i.onrender.com/predict_house_price"; 
     $.post(url, {
         total_sqft: parseFloat(sqft.value),
         bhk: bhk,
