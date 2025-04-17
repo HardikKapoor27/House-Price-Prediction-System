@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login / Register - House Price Predictor</title>
+  <link rel="stylesheet" href="app.css" />
+</head>
+<body>
+  <div class="background"></div>
+
+  <nav class="navbar">
+    <div class="nav-left">
+      <img src="logo.png" alt="House Logo" class="logo" />
+      <h1 class="nav-title">House Price Predictor</h1>
+    </div>
+    <div class="nav-right">
+      <a href="index.html" class="nav-button">Home</a>
+      <a href="app.html" class="nav-button">House Price Predictor</a>
+      <a href="prediction-details.html" class="nav-button">Prediction History</a>
+      <a href="model-performance.html" class="nav-button">Model Performance</a>
+      <a href="about.html" class="nav-button">About Us</a>
+      <a href="contact.html" class="nav-button">Contact Us</a>
+      <a href="login.html" class="nav-button">Login / Register</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <h2 class="main-heading">Login / Register</h2>
+    <div style="display: flex; gap: 40px; justify-content: center; flex-wrap: wrap;">
+      
+      <!-- Login Form -->
+      <div class="form-box">
+        <h3>Login</h3>
+        <form id="login-form">
+          <label for="login-email">Email:</label>
+          <input type="email" id="login-email" name="email" required />
+
+          <label for="login-password">Password:</label>
+          <input type="password" id="login-password" name="password" required />
+
+          <button type="submit" class="cta-button">Login</button>
+        </form>
+      </div>
+
+      <!-- Register Form -->
+      <div class="form-box">
+        <h3>Register</h3>
+        <form id="register-form">
+          <label for="register-name">Name:</label>
+          <input type="text" id="register-name" name="name" required />
+
+          <label for="register-email">Email:</label>
+          <input type="email" id="register-email" name="email" required />
+
+          <label for="register-password">Password:</label>
+          <input type="password" id="register-password" name="password" required />
+
+          <button type="submit" class="cta-button">Register</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
