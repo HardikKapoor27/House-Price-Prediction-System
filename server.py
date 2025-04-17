@@ -4,6 +4,7 @@ import util
 app = Flask(__name__)
 
 users_db = {}
+CORS(app, origins=["https://hardikkapoor27.github.io"])
 
 @app.route('/get_location_names')
 def get_location_names():
@@ -67,7 +68,6 @@ def register_user():
     hashed_pw = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
     users_db[username] = hashed_pw
-    response.headers.add('Access-Control-Allow-Origin', '*')
     return jsonify({"message": "User registered successfully!"}), 200
 
 # Route for logging in a user
@@ -87,7 +87,15 @@ def login_user():
     else:
         return jsonify({"message": "Incorrect password!"}), 400
 
-  response.headers.add('Access-Control-Allow-Origin', '*')
+@app.before_request
+def before_request():
+    if request.method == "OPTIONS":
+        response = app.make_response('')
+        response.headers['Access-Control-Allow-Origin'] = '*'
+        response.headers['Access-Control-Allow-Methods'] = 'POST, GET, OPTIONS'
+        response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+        return response
+
 if __name__ == "__main__":
     print("Starting Python Flask Server For House Price Prediction....")
     util.load_saved_artifacts()
