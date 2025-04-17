@@ -24,6 +24,14 @@ def predict_house_price():
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
+@app.route('/get_prediction_history', methods = ['GET'])
+def get_prediction_history():
+    response = jsonify({
+        'prediction_history': prediction_history
+    })
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
+
 if __name__ == "__main__":
     print("Starting Python Flask Server For House Price Prediction....")
     util.load_saved_artifacts()
