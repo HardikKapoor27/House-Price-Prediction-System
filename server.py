@@ -33,7 +33,6 @@ def predict_house_price():
     }
 
     return jsonify({'estimated_price': estimated_price})
-    return response
 
 def get_account_info():
     data = request.json
