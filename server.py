@@ -16,17 +16,16 @@ def get_location_names():
     })
     return response
 
-@app.route('/predict_house_price', methods = ['POST'])
+@app.route('/predict_house_price', methods=['POST'])
 def predict_house_price():
     total_sqft = float(request.form['total_sqft'])
     location = request.form['location']
     bhk = int(request.form['bhk'])
     bath = int(request.form['bath'])
+    email = request.form['email']  # Get from frontend form
 
-    # Get predicted price
     estimated_price = util.get_estimated_price(location, total_sqft, bhk, bath)
 
-    # Create prediction record
     prediction = {
         'location': location,
         'total_sqft': total_sqft,
@@ -35,24 +34,41 @@ def predict_house_price():
         'estimated_price': estimated_price
     }
 
-    # Append to prediction history
-    prediction_history.append(prediction)
+    if email in users_db:
+        if 'history' not in users_db[email]:
+            users_db[email]['history'] = []
+        users_db[email]['history'].append(prediction)
 
-    # Save updated prediction history
-    util.save_prediction_history(prediction_history)
-
-    # Return predicted price as response
-    response = jsonify({
-        'estimated_price': estimated_price
-    })
+    return jsonify({'estimated_price': estimated_price})
     return response
 
-@app.route('/get_prediction_history', methods = ['GET'])
+@app.route('/get_account_info', methods=['POST'])
+def get_account_info():
+    data = request.json
+    email = data.get("email")
+
+    user = users_db.get(email)
+    if user:
+        return jsonify({
+            "success": True,
+            "email": user["email"],
+            "password": user["password"],
+            "history": user.get("history", [])
+        })
+    else:
+        return jsonify({"success": False, "message": "User not found"}), 404
+
+@app.route('/get_prediction_history', methods=['POST'])
 def get_prediction_history():
-    response = jsonify({
-        'prediction_history': prediction_history
-    })
-    return response
+    data = request.json
+    email = data.get("email")
+
+    user = users_db.get(email)
+    if user:
+        history = user.get("history", [])
+        return jsonify({"success": True, "prediction_history": history})
+    else:
+        return jsonify({"success": False, "message": "User not found"}), 404
 
 @app.route("/register", methods=["POST"])
 def register():
