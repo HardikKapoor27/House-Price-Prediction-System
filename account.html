@@ -2,12 +2,139 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>My Account - House Price Predictor</title>
-  <link rel="stylesheet" href="app.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Account - House Price Predictor</title>
+  <style>
+    /* Basic Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+    }
+
+    /* Navbar Styling */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      background-color: #ff6600;
+      color: white;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+    }
+
+    .logo {
+      width: 50px;
+      margin-right: 10px;
+    }
+
+    .nav-title {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .nav-right {
+      display: flex;
+      gap: 15px;
+    }
+
+    .nav-button {
+      color: white;
+      text-decoration: none;
+      padding: 10px;
+      background-color: #ff6600;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+
+    .nav-button:hover {
+      background-color: #e65c00;
+    }
+
+    /* Main Container */
+    .container {
+      padding: 20px;
+    }
+
+    .main-heading {
+      text-align: center;
+      font-size: 28px;
+      color: #333;
+    }
+
+    .account-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      align-items: center;
+    }
+
+    /* Section Styling */
+    .section-box {
+      padding: 20px;
+      margin: 10px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      background-color: #fff;
+      width: 80%;
+      max-width: 600px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .section-box h3 {
+      font-size: 1.5em;
+      margin-bottom: 10px;
+    }
+
+    .section-box p {
+      font-size: 1.1em;
+      margin-bottom: 5px;
+    }
+
+    /* Prediction History */
+    #prediction-history {
+      list-style-type: none;
+      padding-left: 0;
+      margin-top: 10px;
+    }
+
+    #prediction-history li {
+      margin-bottom: 10px;
+      padding: 10px;
+      background-color: #f9f9f9;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+    }
+
+    /* Logout Button */
+    .cta-button {
+      padding: 10px 20px;
+      background-color: #ff6600;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1.2em;
+    }
+
+    .cta-button:hover {
+      background-color: #e65c00;
+    }
+  </style>
 </head>
 <body>
   <div class="background"></div>
 
+  <!-- Navbar -->
   <nav class="navbar">
     <div class="nav-left">
       <img src="logo.png" alt="House Logo" class="logo" />
@@ -15,55 +142,82 @@
     </div>
     <div class="nav-right">
       <a href="index.html" class="nav-button">Home</a>
-      <a href="app.html" class="nav-button">Predict</a>
+      <a href="app.html" class="nav-button">House Price Predictor</a>
+      <a href="prediction-details.html" class="nav-button">Prediction History</a>
+      <a href="about.html" class="nav-button">About Us</a>
+      <a href="contact.html" class="nav-button">Contact Us</a>
       <a href="account.html" class="nav-button">Account</a>
-      <a href="login.html" class="nav-button" id="auth-button">Login / Register</a>
     </div>
   </nav>
 
   <div class="container">
-    <h2 class="main-heading">My Account</h2>
-    <div id="account-info" class="form-box"></div>
-    <div id="history-box" class="form-box"></div>
+    <h2 class="main-heading">Account Details</h2>
+
+    <div class="account-container">
+      <!-- Account Details Section -->
+      <div class="section-box">
+        <h3>Account Details</h3>
+        <p>Email: <span id="account-email"></span></p>
+      </div>
+
+      <!-- Prediction History Section -->
+      <div class="section-box">
+        <h3>Prediction History</h3>
+        <ul id="prediction-history">
+          <!-- Predictions will be listed here -->
+        </ul>
+      </div>
+
+      <!-- Logout Button -->
+      <div class="section-box">
+        <button id="logout-button" class="cta-button">Logout</button>
+      </div>
+    </div>
   </div>
 
-<script>
-  const API_URL = "https://house-price-prediction-system-503i.onrender.com";
-  const email = localStorage.getItem("userEmail");
-  const password = localStorage.getItem("userPassword");
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const API_URL = "https://house-price-prediction-system-503i.onrender.com"; // Your API base URL
+      const accountEmail = document.getElementById("account-email");
+      const predictionHistoryList = document.getElementById("prediction-history");
+      const logoutButton = document.getElementById("logout-button");
 
-  if (!email || !password) {
-    document.getElementById("account-info").innerHTML = "<p>Please log in to see account details.</p>";
-  } else {
-    document.getElementById("account-info").innerHTML = `
-      <h3>Account Details</h3>
-      <p><strong>Email:</strong> ${email}</p>
-      <p><strong>Password:</strong> ${password}</p>
-    `;
+      // Fetch logged-in user's email (assumed to be stored after login)
+      const userEmail = localStorage.getItem("email");
 
-    fetch(`${API_URL}/get_prediction_history`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email }),
-    })
-    .then((res) => res.json())
-    .then((data) => {
-      if (data.success) {
-        const historyList = data.prediction_history.map(
-          h => `<li>${h.bhk} BHK, ${h.bath} Bath at ${h.location}, ${h.total_sqft} sqft → ₹${h.estimated_price}L</li>`
-        ).join("");
-        document.getElementById("history-box").innerHTML = `
-          <h3>Prediction History</h3>
-          <ul>${historyList}</ul>
-        `;
+      if (userEmail) {
+        accountEmail.textContent = userEmail; // Display email in account section
+
+        // Fetch and display prediction history
+        fetch(`${API_URL}/get_prediction_history`)
+          .then(response => response.json())
+          .then(data => {
+            if (data.prediction_history && data.prediction_history.length > 0) {
+              data.prediction_history.forEach((prediction) => {
+                const li = document.createElement("li");
+                li.textContent = `Location: ${prediction.location}, Size: ${prediction.total_sqft} sqft, Price: $${prediction.estimated_price}`;
+                predictionHistoryList.appendChild(li);
+              });
+            } else {
+              predictionHistoryList.innerHTML = "<li>No predictions found</li>";
+            }
+          })
+          .catch(error => {
+            console.error("Error fetching prediction history:", error);
+            predictionHistoryList.innerHTML = "<li>Error fetching prediction history</li>";
+          });
+
+        // Handle Logout
+        logoutButton.addEventListener("click", () => {
+          localStorage.removeItem("email"); // Remove email from localStorage
+          window.location.href = "login.html"; // Redirect to login page
+        });
       } else {
-        document.getElementById("history-box").innerHTML = "<p>No history found.</p>";
+        alert("You are not logged in.");
+        window.location.href = "login.html"; // Redirect to login page if no email found
       }
-    })
-    .catch((err) => {
-      console.error("Error loading prediction history:", err);
     });
-  }
-</script>
+  </script>
+
 </body>
 </html>
