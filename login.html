@@ -62,7 +62,7 @@
   </div>
 
   <script>
-  document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", () => {
   const loginForm = document.getElementById("login-form");
   const registerForm = document.getElementById("register-form");
 
@@ -84,7 +84,7 @@
         const data = await res.json();
         if (data.success) {
           alert("Login successful!");
-          // window.location.href = "your-dashboard.html";
+          window.location.href = "app.html"; // redirect after login
         } else {
           alert("Login failed: " + data.message);
         }
@@ -98,6 +98,7 @@
   if (registerForm) {
     registerForm.addEventListener("submit", async (e) => {
       e.preventDefault();
+      const name = document.getElementById("register-name").value;
       const email = document.getElementById("register-email").value;
       const password = document.getElementById("register-password").value;
 
@@ -105,7 +106,7 @@
         const res = await fetch(`${API_URL}/register`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password }),
+          body: JSON.stringify({ name, email, password }),
         });
 
         const data = await res.json();
