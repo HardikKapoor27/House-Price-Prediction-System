@@ -1,138 +1,93 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Account - House Price Predictor</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Account</title>
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+
   <style>
-    /* Basic Reset */
-    * {
+    /* Global Styles */
+    body {
+      font-family: 'Poppins', sans-serif;
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
-    }
-    
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
+      background-color: #f4f4f9;
     }
 
-    /* Navbar Styling */
+    /* Navbar Styles */
     .navbar {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      padding: 20px;
-      background-color: #ff6600;
+      background-color: #ff6f00;
+      padding: 10px 20px;
       color: white;
     }
 
-    .nav-left {
-      display: flex;
-      align-items: center;
-    }
-
-    .logo {
+    .nav-left img {
       width: 50px;
       margin-right: 10px;
     }
 
     .nav-title {
-      font-size: 24px;
-      font-weight: bold;
+      font-size: 1.5em;
+      font-weight: 500;
     }
 
     .nav-right {
       display: flex;
-      gap: 15px;
-    }
-
-    .nav-button {
-      color: white;
-      text-decoration: none;
-      padding: 10px;
-      background-color: #ff6600;
-      border-radius: 5px;
-      font-weight: bold;
-    }
-
-    .nav-button:hover {
-      background-color: #e65c00;
-    }
-
-    /* Main Container */
-    .container {
-      padding: 20px;
-    }
-
-    .main-heading {
-      text-align: center;
-      font-size: 28px;
-      color: #333;
-    }
-
-    .account-container {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
       align-items: center;
     }
 
-    /* Section Styling */
-    .section-box {
-      padding: 20px;
-      margin: 10px;
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      background-color: #fff;
-      width: 80%;
-      max-width: 600px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    .section-box h3 {
-      font-size: 1.5em;
-      margin-bottom: 10px;
-    }
-
-    .section-box p {
-      font-size: 1.1em;
-      margin-bottom: 5px;
-    }
-
-    /* Prediction History */
-    #prediction-history {
-      list-style-type: none;
-      padding-left: 0;
-      margin-top: 10px;
-    }
-
-    #prediction-history li {
-      margin-bottom: 10px;
-      padding: 10px;
-      background-color: #f9f9f9;
-      border-radius: 5px;
-      border: 1px solid #ddd;
-    }
-
-    /* Logout Button */
-    .cta-button {
-      padding: 10px 20px;
-      background-color: #ff6600;
+    .nav-button {
+      margin: 0 10px;
       color: white;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .nav-button:hover {
+      text-decoration: underline;
+    }
+
+    /* Account Page Styles */
+    .account-page {
+      padding: 20px;
+      max-width: 800px;
+      margin: 50px auto;
+      background-color: white;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+    }
+
+    .account-page h2, .account-page h3 {
+      color: #333;
+    }
+
+    .account-page p {
+      font-size: 1.1em;
+      color: #555;
+    }
+
+    #logout-button {
+      background-color: #ff6f00;
+      color: white;
+      padding: 10px 20px;
+      font-size: 1.2em;
       border: none;
       border-radius: 5px;
       cursor: pointer;
-      font-size: 1.2em;
     }
 
-    .cta-button:hover {
+    #logout-button:hover {
       background-color: #e65c00;
     }
   </style>
 </head>
+
 <body>
-  <div class="background"></div>
 
   <!-- Navbar -->
   <nav class="navbar">
@@ -146,76 +101,73 @@
       <a href="prediction-details.html" class="nav-button">Prediction History</a>
       <a href="about.html" class="nav-button">About Us</a>
       <a href="contact.html" class="nav-button">Contact Us</a>
-      <a href="account.html" class="nav-button">Account</a>
+
+      <a id="account-link" href="account.html" class="nav-button" style="display: none;">Account</a>
+      <a id="login-register-link" href="login.html" class="nav-button" style="display: none;">Login / Register</a>
     </div>
   </nav>
 
-  <div class="container">
-    <h2 class="main-heading">Account Details</h2>
+  <!-- Account Page Content -->
+  <div class="account-page">
+    <h2>Account Details</h2>
+    <p id="account-email">Email: <span></span></p>
+    <p id="account-password">Password: <span></span></p>
 
-    <div class="account-container">
-      <!-- Account Details Section -->
-      <div class="section-box">
-        <h3>Account Details</h3>
-        <p>Email: <span id="account-email"></span></p>
-      </div>
+    <h3>Prediction History</h3>
+    <ul id="prediction-history"></ul>
 
-      <!-- Prediction History Section -->
-      <div class="section-box">
-        <h3>Prediction History</h3>
-        <ul id="prediction-history">
-          <!-- Predictions will be listed here -->
-        </ul>
-      </div>
-
-      <!-- Logout Button -->
-      <div class="section-box">
-        <button id="logout-button" class="cta-button">Logout</button>
-      </div>
-    </div>
+    <button id="logout-button">Logout</button>
   </div>
 
+  <!-- JavaScript for Navbar Logic -->
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      const API_URL = "https://house-price-prediction-system-503i.onrender.com"; // Your API base URL
-      const accountEmail = document.getElementById("account-email");
-      const predictionHistoryList = document.getElementById("prediction-history");
-      const logoutButton = document.getElementById("logout-button");
+      const isLoggedIn = localStorage.getItem("loggedIn"); // Check if user is logged in
 
-      // Fetch logged-in user's email (assumed to be stored after login)
-      const userEmail = localStorage.getItem("email");
+      if (isLoggedIn) {
+        // Hide login/register and show account
+        document.getElementById("login-register-link").style.display = "none";
+        document.getElementById("account-link").style.display = "block";
+      } else {
+        // Hide account and show login/register
+        document.getElementById("login-register-link").style.display = "block";
+        document.getElementById("account-link").style.display = "none";
+      }
+    });
+  </script>
 
-      if (userEmail) {
-        accountEmail.textContent = userEmail; // Display email in account section
+  <!-- JavaScript for Account Page Logic -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const email = localStorage.getItem("email");
+      const predictionHistory = JSON.parse(localStorage.getItem("predictionHistory")) || [];
 
-        // Fetch and display prediction history
-        fetch(`${API_URL}/get_prediction_history`)
-          .then(response => response.json())
-          .then(data => {
-            if (data.prediction_history && data.prediction_history.length > 0) {
-              data.prediction_history.forEach((prediction) => {
-                const li = document.createElement("li");
-                li.textContent = `Location: ${prediction.location}, Size: ${prediction.total_sqft} sqft, Price: $${prediction.estimated_price}`;
-                predictionHistoryList.appendChild(li);
-              });
-            } else {
-              predictionHistoryList.innerHTML = "<li>No predictions found</li>";
-            }
-          })
-          .catch(error => {
-            console.error("Error fetching prediction history:", error);
-            predictionHistoryList.innerHTML = "<li>Error fetching prediction history</li>";
-          });
+      // Display account details
+      if (email) {
+        document.getElementById("account-email").querySelector('span').textContent = email;
+      } else {
+        document.getElementById("account-email").textContent = "No email found.";
+      }
 
-        // Handle Logout
-        logoutButton.addEventListener("click", () => {
-          localStorage.removeItem("email"); // Remove email from localStorage
-          window.location.href = "login.html"; // Redirect to login page
+      // Display prediction history
+      const historyList = document.getElementById("prediction-history");
+      if (predictionHistory.length > 0) {
+        predictionHistory.forEach(prediction => {
+          const listItem = document.createElement("li");
+          listItem.textContent = `Location: ${prediction.location}, Estimated Price: ${prediction.estimated_price}`;
+          historyList.appendChild(listItem);
         });
       } else {
-        alert("You are not logged in.");
-        window.location.href = "login.html"; // Redirect to login page if no email found
+        historyList.innerHTML = "<li>No predictions yet.</li>";
       }
+
+      // Handle logout
+      document.getElementById("logout-button").addEventListener("click", () => {
+        localStorage.removeItem("loggedIn");
+        localStorage.removeItem("email");
+        localStorage.removeItem("predictionHistory");
+        window.location.href = "login.html"; // Redirect to login page
+      });
     });
   </script>
 
