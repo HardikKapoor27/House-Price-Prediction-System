@@ -68,7 +68,7 @@ def register_user():
     hashed_pw = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
     users_db[username] = hashed_pw
-
+    response.headers.add('Access-Control-Allow-Origin', '*')
     return jsonify({"message": "User registered successfully!"}), 200
 
 # Route for logging in a user
@@ -88,6 +88,7 @@ def login_user():
     else:
         return jsonify({"message": "Incorrect password!"}), 400
 
+  response.headers.add('Access-Control-Allow-Origin', '*')
 if __name__ == "__main__":
     print("Starting Python Flask Server For House Price Prediction....")
     util.load_saved_artifacts()
