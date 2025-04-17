@@ -7,14 +7,13 @@ app = Flask(__name__)
 users_db = {}
 prediction_history = []
 
-CORS(app, origins=["https://hardikkapoor27.github.io"])
+CORS(app, resources={r"/*": {"origins": "https://hardikkapoor27.github.io"}})
 
 @app.route('/get_location_names')
 def get_location_names():
     response = jsonify({
         'locations': util.get_location_names()
     })
-    response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
 @app.route('/predict_house_price', methods = ['POST'])
@@ -46,7 +45,6 @@ def predict_house_price():
     response = jsonify({
         'estimated_price': estimated_price
     })
-    response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
 @app.route('/get_prediction_history', methods = ['GET'])
@@ -54,7 +52,6 @@ def get_prediction_history():
     response = jsonify({
         'prediction_history': prediction_history
     })
-    response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
 @app.route("/register", methods=["POST"])
@@ -92,7 +89,6 @@ def login():
 def before_request():
     if request.method == "OPTIONS":
         response = app.make_response('')
-        response.headers['Access-Control-Allow-Origin'] = '*'
         response.headers['Access-Control-Allow-Methods'] = 'POST, GET, OPTIONS'
         response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
         return response
