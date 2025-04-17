@@ -4,7 +4,6 @@ import util
 app = Flask(__name__)
 
 users_db = {}
-CORS(app, origins=["https://hardikkapoor27.github.io"])
 
 @app.route('/get_location_names')
 def get_location_names():
