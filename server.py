@@ -3,6 +3,8 @@ import util
 
 app = Flask(__name__)
 
+users_db = {}
+
 @app.route('/get_location_names')
 def get_location_names():
     response = jsonify({
@@ -50,6 +52,40 @@ def get_prediction_history():
     })
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
+
+# Route for registering a new user
+@app.route('/register', methods=['POST'])
+def register_user():
+    data = request.get_json()
+    username = data['username']
+    password = data['password']
+
+    if username in users_db:
+        return jsonify({"message": "User already exists!"}), 400
+
+    # Hash the password
+    hashed_pw = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+
+    users_db[username] = hashed_pw
+
+    return jsonify({"message": "User registered successfully!"}), 200
+
+# Route for logging in a user
+@app.route('/login', methods=['POST'])
+def login_user():
+    data = request.get_json()
+    username = data['username']
+    password = data['password']
+
+    if username not in users_db:
+        return jsonify({"message": "User not found!"}), 404
+
+    stored_hash = users_db[username]
+
+    if bcrypt.checkpw(password.encode('utf-8'), stored_hash):
+        return jsonify({"message": "Login successful!"}), 200
+    else:
+        return jsonify({"message": "Incorrect password!"}), 400
 
 if __name__ == "__main__":
     print("Starting Python Flask Server For House Price Prediction....")
