@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>My Account - House Price Predictor</title>
+  <link rel="stylesheet" href="app.css" />
+</head>
+<body>
+  <div class="background"></div>
+
+  <nav class="navbar">
+    <div class="nav-left">
+      <img src="logo.png" alt="House Logo" class="logo" />
+      <h1 class="nav-title">House Price Predictor</h1>
+    </div>
+    <div class="nav-right">
+      <a href="index.html" class="nav-button">Home</a>
+      <a href="app.html" class="nav-button">Predict</a>
+      <a href="account.html" class="nav-button">Account</a>
+      <a href="login.html" class="nav-button" id="auth-button">Login / Register</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <h2 class="main-heading">My Account</h2>
+    <div id="account-info" class="form-box"></div>
+    <div id="history-box" class="form-box"></div>
+  </div>
+
+<script>
+  const API_URL = "https://house-price-prediction-system-503i.onrender.com";
+  const email = localStorage.getItem("userEmail");
+  const password = localStorage.getItem("userPassword");
+
+  if (!email || !password) {
+    document.getElementById("account-info").innerHTML = "<p>Please log in to see account details.</p>";
+  } else {
+    document.getElementById("account-info").innerHTML = `
+      <h3>Account Details</h3>
+      <p><strong>Email:</strong> ${email}</p>
+      <p><strong>Password:</strong> ${password}</p>
+    `;
+
+    fetch(`${API_URL}/get_prediction_history`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    })
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.success) {
+        const historyList = data.prediction_history.map(
+          h => `<li>${h.bhk} BHK, ${h.bath} Bath at ${h.location}, ${h.total_sqft} sqft → ₹${h.estimated_price}L</li>`
+        ).join("");
+        document.getElementById("history-box").innerHTML = `
+          <h3>Prediction History</h3>
+          <ul>${historyList}</ul>
+        `;
+      } else {
+        document.getElementById("history-box").innerHTML = "<p>No history found.</p>";
+      }
+    })
+    .catch((err) => {
+      console.error("Error loading prediction history:", err);
+    });
+  }
+</script>
+</body>
+</html>
