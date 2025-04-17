@@ -61,5 +61,53 @@
       </div>
     </div>
   </div>
+
+  <script>
+  const backendUrl = "https://your-backend-url.com"; // Replace with your backend server address
+
+  document.getElementById("login-form").addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const email = document.getElementById("login-email").value;
+    const password = document.getElementById("login-password").value;
+
+    const response = await fetch(`${backendUrl}/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+
+    const result = await response.json();
+    if (response.ok) {
+      alert("Login successful!");
+      localStorage.setItem("token", result.token); // Save token if using JWT
+      window.location.href = "prediction-details.html";
+    } else {
+      alert(result.message || "Login failed.");
+    }
+  });
+
+  document.getElementById("register-form").addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const name = document.getElementById("register-name").value;
+    const email = document.getElementById("register-email").value;
+    const password = document.getElementById("register-password").value;
+
+    const response = await fetch(`${backendUrl}/register`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, password }),
+    });
+
+    const result = await response.json();
+    if (response.ok) {
+      alert("Registration successful! Please login.");
+    } else {
+      alert(result.message || "Registration failed.");
+    }
+  });
+</script>
+
 </body>
 </html>
