@@ -62,50 +62,65 @@
   </div>
 
   <script>
-  const backendUrl = "https://house-price-prediction-system-503i.onrender.com"; // Replace with your backend server address
+  document.addEventListener("DOMContentLoaded", () => {
+  const loginForm = document.getElementById("login-form");
+  const registerForm = document.getElementById("register-form");
 
-  document.getElementById("login-form").addEventListener("submit", async function (e) {
-    e.preventDefault();
+  const API_URL = "https://house-price-prediction-system-503i.onrender.com";
 
-    const email = document.getElementById("login-email").value;
-    const password = document.getElementById("login-password").value;
+  if (loginForm) {
+    loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("login-email").value;
+      const password = document.getElementById("login-password").value;
 
-    const response = await fetch(`${backendUrl}/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
+      try {
+        const res = await fetch(`${API_URL}/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          alert("Login successful!");
+          // window.location.href = "your-dashboard.html";
+        } else {
+          alert("Login failed: " + data.message);
+        }
+      } catch (err) {
+        console.error("Login error:", err);
+        alert("Login error. Please try again later.");
+      }
     });
+  }
 
-    const result = await response.json();
-    if (response.ok) {
-      alert("Login successful!");
-      localStorage.setItem("token", result.token); // Save token if using JWT
-      window.location.href = "prediction-details.html";
-    } else {
-      alert(result.message || "Login failed.");
-    }
-  });
+  if (registerForm) {
+    registerForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("register-email").value;
+      const password = document.getElementById("register-password").value;
 
-  document.getElementById("register-form").addEventListener("submit", async function (e) {
-    e.preventDefault();
+      try {
+        const res = await fetch(`${API_URL}/register`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        });
 
-    const name = document.getElementById("register-name").value;
-    const email = document.getElementById("register-email").value;
-    const password = document.getElementById("register-password").value;
-
-    const response = await fetch(`${backendUrl}/register`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, password }),
+        const data = await res.json();
+        if (data.success) {
+          alert("Registered successfully!");
+        } else {
+          alert("Registration failed: " + data.message);
+        }
+      } catch (err) {
+        console.error("Registration error:", err);
+        alert("Registration error. Please try again later.");
+      }
     });
-
-    const result = await response.json();
-    if (response.ok) {
-      alert("Registration successful! Please login.");
-    } else {
-      alert(result.message || "Registration failed.");
-    }
-  });
+  }
+});
 </script>
 
 </body>
