@@ -60,7 +60,7 @@ def register():
     email = data.get("email")
     password = data.get("password")
 
-    if not name or not email or not password:
+    if not email or not password:
         return jsonify({"success": False, "message": "Missing email or password"}), 400
 
     if email in users_db:
