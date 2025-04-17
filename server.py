@@ -34,11 +34,6 @@ def predict_house_price():
         'estimated_price': estimated_price
     }
 
-    if email in users_db:
-        if 'history' not in users_db[email]:
-            users_db[email]['history'] = []
-        users_db[email]['history'].append(prediction)
-
     return jsonify({'estimated_price': estimated_price})
     return response
 
