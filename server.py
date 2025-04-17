@@ -22,8 +22,6 @@ def predict_house_price():
     location = request.form['location']
     bhk = int(request.form['bhk'])
     bath = int(request.form['bath'])
-    email = request.form['email']  # Get from frontend form
-
     estimated_price = util.get_estimated_price(location, total_sqft, bhk, bath)
 
     prediction = {
@@ -37,7 +35,6 @@ def predict_house_price():
     return jsonify({'estimated_price': estimated_price})
     return response
 
-@app.route('/get_account_info', methods=['POST'])
 def get_account_info():
     data = request.json
     email = data.get("email")
