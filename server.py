@@ -18,8 +18,27 @@ def predict_house_price():
     bhk = int(request.form['bhk'])
     bath = int(request.form['bath'])
 
+    # Get predicted price
+    estimated_price = util.get_estimated_price(location, total_sqft, bhk, bath)
+
+    # Create prediction record
+    prediction = {
+        'location': location,
+        'total_sqft': total_sqft,
+        'bhk': bhk,
+        'bath': bath,
+        'estimated_price': estimated_price
+    }
+
+    # Append to prediction history
+    prediction_history.append(prediction)
+
+    # Save updated prediction history
+    util.save_prediction_history(prediction_history)
+
+    # Return predicted price as response
     response = jsonify({
-        'estimated_price': util.get_estimated_price(location,total_sqft,bhk,bath)
+        'estimated_price': estimated_price
     })
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
