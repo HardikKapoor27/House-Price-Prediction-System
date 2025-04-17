@@ -4,8 +4,9 @@ from flask_cors import CORS
 import util
 
 app = Flask(__name__)
-
 users_db = {}
+prediction_history = []
+
 CORS(app, origins=["https://hardikkapoor27.github.io"])
 
 @app.route('/get_location_names')
@@ -65,10 +66,10 @@ def register():
     if not name or not email or not password:
         return jsonify({"success": False, "message": "Missing email or password"}), 400
 
-    if email in users:
+    if email in users_db:
         return jsonify({"success": False, "message": "User already exists"}), 409
 
-    users[email] = {"email": email, "password": password}
+    users_db[email] = {"email": email, "password": password}
     return jsonify({"success": True, "message": "Registered successfully"}), 200
 
 
@@ -81,7 +82,7 @@ def login():
     if not email or not password:
         return jsonify({"success": False, "message": "Missing email or password"}), 400
 
-    user = users.get(email)
+    user = users_db.get(email)
     if user and user["password"] == password:
         return jsonify({"success": True, "message": "Login successful", "email": user["email"]}), 200
     else:
