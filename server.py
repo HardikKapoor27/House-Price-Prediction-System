@@ -68,7 +68,7 @@ def register():
     if email in users:
         return jsonify({"success": False, "message": "User already exists"}), 409
 
-    users[email] = {"name": name, "password": password}
+    users[email] = {"email": email, "password": password}
     return jsonify({"success": True, "message": "Registered successfully"}), 200
 
 
