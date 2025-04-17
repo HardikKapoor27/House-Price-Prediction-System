@@ -59,17 +59,19 @@ def get_prediction_history():
 @app.route("/register", methods=["POST"])
 def register():
     data = request.json
+    name = data.get("name")
     email = data.get("email")
     password = data.get("password")
 
-    if not email or not password:
-        return jsonify({"success": False, "message": "Missing email or password"}), 400
+    if not name or not email or not password:
+        return jsonify({"success": False, "message": "Missing name, email or password"}), 400
 
     if email in users:
         return jsonify({"success": False, "message": "User already exists"}), 409
 
-    users[email] = password
+    users[email] = {"name": name, "password": password}
     return jsonify({"success": True, "message": "Registered successfully"}), 200
+
 
 @app.route("/login", methods=["POST"])
 def login():
@@ -80,8 +82,9 @@ def login():
     if not email or not password:
         return jsonify({"success": False, "message": "Missing email or password"}), 400
 
-    if users.get(email) == password:
-        return jsonify({"success": True, "message": "Login successful"}), 200
+    user = users.get(email)
+    if user and user["password"] == password:
+        return jsonify({"success": True, "message": "Login successful", "name": user["name"]}), 200
     else:
         return jsonify({"success": False, "message": "Invalid credentials"}), 401
 
