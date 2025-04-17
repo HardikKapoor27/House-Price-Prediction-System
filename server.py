@@ -83,7 +83,7 @@ def login():
 
     user = users.get(email)
     if user and user["password"] == password:
-        return jsonify({"success": True, "message": "Login successful", "name": user["name"]}), 200
+        return jsonify({"success": True, "message": "Login successful", "email": user["email"]}), 200
     else:
         return jsonify({"success": False, "message": "Invalid credentials"}), 401
 
