@@ -56,38 +56,34 @@ def get_prediction_history():
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
-# Route for registering a new user
-@app.route('/register', methods=['POST'])
-def register_user():
-    data = request.get_json()
-    username = data['username']
-    password = data['password']
+@app.route("/register", methods=["POST"])
+def register():
+    data = request.json
+    email = data.get("email")
+    password = data.get("password")
 
-    if username in users_db:
-        return jsonify({"message": "User already exists!"}), 400
+    if not email or not password:
+        return jsonify({"success": False, "message": "Missing email or password"}), 400
 
-    # Hash the password
-    hashed_pw = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+    if email in users:
+        return jsonify({"success": False, "message": "User already exists"}), 409
 
-    users_db[username] = hashed_pw
-    return jsonify({"message": "User registered successfully!"}), 200
+    users[email] = password
+    return jsonify({"success": True, "message": "Registered successfully"}), 200
 
-# Route for logging in a user
-@app.route('/login', methods=['POST'])
-def login_user():
-    data = request.get_json()
-    username = data['username']
-    password = data['password']
+@app.route("/login", methods=["POST"])
+def login():
+    data = request.json
+    email = data.get("email")
+    password = data.get("password")
 
-    if username not in users_db:
-        return jsonify({"message": "User not found!"}), 404
+    if not email or not password:
+        return jsonify({"success": False, "message": "Missing email or password"}), 400
 
-    stored_hash = users_db[username]
-
-    if bcrypt.checkpw(password.encode('utf-8'), stored_hash):
-        return jsonify({"message": "Login successful!"}), 200
+    if users.get(email) == password:
+        return jsonify({"success": True, "message": "Login successful"}), 200
     else:
-        return jsonify({"message": "Incorrect password!"}), 400
+        return jsonify({"success": False, "message": "Invalid credentials"}), 401
 
 @app.before_request
 def before_request():
