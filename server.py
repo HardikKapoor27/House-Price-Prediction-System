@@ -6,8 +6,7 @@ from util import get_estimated_price, get_location_names, load_saved_artifacts
 
 app = Flask(__name__)
 app.secret_key = 'your-secret-key'
-CORS(app, supports_credentials=True)
-
+CORS(app, supports_credentials=True, origins=["https://hardikkapoor27.github.io"])
 load_saved_artifacts()  # Load model & data columns
 
 # ----------- Helper Functions -----------
