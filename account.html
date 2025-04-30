@@ -1,175 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Account</title>
-  
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
-
-  <style>
-    /* Global Styles */
-    body {
-      font-family: 'Poppins', sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f4f4f9;
-    }
-
-    /* Navbar Styles */
-    .navbar {
-      display: flex;
-      justify-content: space-between;
-      background-color: #ff6f00;
-      padding: 10px 20px;
-      color: white;
-    }
-
-    .nav-left img {
-      width: 50px;
-      margin-right: 10px;
-    }
-
-    .nav-title {
-      font-size: 1.5em;
-      font-weight: 500;
-    }
-
-    .nav-right {
-      display: flex;
-      align-items: center;
-    }
-
-    .nav-button {
-      margin: 0 10px;
-      color: white;
-      text-decoration: none;
-      font-weight: 500;
-    }
-
-    .nav-button:hover {
-      text-decoration: underline;
-    }
-
-    /* Account Page Styles */
-    .account-page {
-      padding: 20px;
-      max-width: 800px;
-      margin: 50px auto;
-      background-color: white;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      border-radius: 8px;
-    }
-
-    .account-page h2, .account-page h3 {
-      color: #333;
-    }
-
-    .account-page p {
-      font-size: 1.1em;
-      color: #555;
-    }
-
-    #logout-button {
-      background-color: #ff6f00;
-      color: white;
-      padding: 10px 20px;
-      font-size: 1.2em;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    #logout-button:hover {
-      background-color: #e65c00;
-    }
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Account - House Price Predictor</title>
+  <link rel="stylesheet" href="app.css" />
 </head>
-
 <body>
-
-  <!-- Navbar -->
+  <div class="background"></div>
   <nav class="navbar">
     <div class="nav-left">
-      <img src="logo.png" alt="House Logo" class="logo" />
+      <img src="logo.png" alt="House Logo" class="logo">
       <h1 class="nav-title">House Price Predictor</h1>
     </div>
-    <div class="nav-right">
-      <a href="index.html" class="nav-button">Home</a>
-      <a href="app.html" class="nav-button">House Price Predictor</a>
-      <a href="prediction-details.html" class="nav-button">Prediction History</a>
-      <a href="about.html" class="nav-button">About Us</a>
-      <a href="contact.html" class="nav-button">Contact Us</a>
-
-      <a id="account-link" href="account.html" class="nav-button" style="display: none;">Account</a>
-      <a id="login-register-link" href="login.html" class="nav-button" style="display: none;">Login / Register</a>
-    </div>
+    <div class="nav-right" id="nav-buttons"></div>
   </nav>
 
-  <!-- Account Page Content -->
-  <div class="account-page">
+  <div class="container">
     <h2>Account Details</h2>
-    <p id="account-email">Email: <span></span></p>
-    <p id="account-password">Password: <span></span></p>
+    <p><strong>Email:</strong> <span id="user-email">Loading...</span></p>
 
-    <h3>Prediction History</h3>
-    <ul id="prediction-history"></ul>
-
-    <button id="logout-button">Logout</button>
+    <button onclick="window.location.href='prediction-history.html'" class="cta-button">View Prediction History</button>
+    <button onclick="logout()" class="cta-button">Logout</button>
   </div>
 
-  <!-- JavaScript for Navbar Logic -->
+  <script src="auth-navbar.js"></script>
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const isLoggedIn = localStorage.getItem("loggedIn"); // Check if user is logged in
-
-      if (isLoggedIn) {
-        // Hide login/register and show account
-        document.getElementById("login-register-link").style.display = "none";
-        document.getElementById("account-link").style.display = "block";
+    fetch('https://house-price-prediction-system-503i.onrender.com/account', {
+      method: 'GET',
+      credentials: 'include'
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.status === 'success') {
+        document.getElementById('user-email').textContent = data.user.email;
       } else {
-        // Hide account and show login/register
-        document.getElementById("login-register-link").style.display = "block";
-        document.getElementById("account-link").style.display = "none";
+        alert('Please log in to view your account.');
+        window.location.href = 'login.html';
       }
     });
-  </script>
 
-  <!-- JavaScript for Account Page Logic -->
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const email = localStorage.getItem("email");
-      const predictionHistory = JSON.parse(localStorage.getItem("predictionHistory")) || [];
-
-      // Display account details
-      if (email) {
-        document.getElementById("account-email").querySelector('span').textContent = email;
-      } else {
-        document.getElementById("account-email").textContent = "No email found.";
-      }
-
-      // Display prediction history
-      const historyList = document.getElementById("prediction-history");
-      if (predictionHistory.length > 0) {
-        predictionHistory.forEach(prediction => {
-          const listItem = document.createElement("li");
-          listItem.textContent = `Location: ${prediction.location}, Estimated Price: ${prediction.estimated_price}`;
-          historyList.appendChild(listItem);
-        });
-      } else {
-        historyList.innerHTML = "<li>No predictions yet.</li>";
-      }
-
-      // Handle logout
-      document.getElementById("logout-button").addEventListener("click", () => {
-        localStorage.removeItem("loggedIn");
-        localStorage.removeItem("email");
-        localStorage.removeItem("predictionHistory");
-        window.location.href = "login.html"; // Redirect to login page
+    function logout() {
+      fetch('https://house-price-prediction-system-503i.onrender.com/logout', {
+        method: 'POST',
+        credentials: 'include'
+      }).then(() => {
+        window.location.href = 'index.html';
       });
-    });
+    }
   </script>
-
 </body>
 </html>
