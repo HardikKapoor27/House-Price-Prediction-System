@@ -2,11 +2,15 @@ from flask import Flask, request, jsonify, session
 from flask_cors import CORS
 import sqlite3
 import hashlib
+from util import get_estimated_price, get_location_names, load_saved_artifacts
 
 app = Flask(__name__)
-app.secret_key = 'secret-key'  # Replace with strong key
+app.secret_key = 'your-secret-key'
 CORS(app, supports_credentials=True)
 
+load_saved_artifacts()  # Load model & data columns
+
+# ----------- Helper Functions -----------
 def get_db():
     conn = sqlite3.connect('database.db')
     conn.row_factory = sqlite3.Row
@@ -15,13 +19,14 @@ def get_db():
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
 
+# ----------- User Auth Routes -----------
 @app.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
     name = data['name']
     email = data['email']
     password = hash_password(data['password'])
-    
+
     conn = get_db()
     cursor = conn.cursor()
     try:
@@ -70,6 +75,7 @@ def account():
         }
     })
 
+# ----------- Prediction & History Routes -----------
 @app.route('/save-prediction', methods=['POST'])
 def save_prediction():
     if 'user_id' not in session:
@@ -100,5 +106,23 @@ def prediction_history():
     conn.close()
     return jsonify({'status': 'success', 'predictions': predictions})
 
+# ----------- ML Prediction API -----------
+@app.route('/predict_home_price', methods=['POST'])
+def predict_home_price():
+    data = request.get_json()
+    location = data['location']
+    sqft = float(data['sqft'])
+    bhk = int(data['bhk'])
+    bath = int(data['bath'])
+
+    estimated_price = get_estimated_price(location, sqft, bhk, bath)
+    return jsonify({'estimated_price': estimated_price})
+
+@app.route('/get_location_names', methods=['GET'])
+def get_location_names_api():
+    locations = get_location_names()
+    return jsonify({'locations': locations})
+
+# ----------- Run the App -----------
 if __name__ == '__main__':
     app.run(debug=True)
