@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const nav = document.getElementById('nav-bar');
+  const nav = document.getElementById('nav-right');
 
   // Pages where login should appear
   const isHome = window.location.pathname.endsWith('index.html') || window.location.pathname === '/';
