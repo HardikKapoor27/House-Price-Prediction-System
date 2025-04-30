@@ -74,6 +74,14 @@ def account():
         }
     })
 
+@app.after_request
+def after_request(response):
+    response.headers['Access-Control-Allow-Origin'] = 'https://hardikkapoor27.github.io'
+    response.headers['Access-Control-Allow-Credentials'] = 'true'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
+    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS']
+    return response
+    
 # ----------- Prediction & History Routes -----------
 @app.route('/save-prediction', methods=['POST'])
 def save_prediction():
@@ -121,14 +129,6 @@ def predict_home_price():
 def get_location_names_api():
     locations = get_location_names()
     return jsonify({'locations': locations})
-
-@app.after_request
-def after_request(response):
-    response.headers['Access-Control-Allow-Origin'] = 'https://hardikkapoor27.github.io'
-    response.headers['Access-Control-Allow-Credentials'] = 'true'
-    response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
-    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS']
-    return response
 
 # ----------- Run the App -----------
 if __name__ == '__main__':
