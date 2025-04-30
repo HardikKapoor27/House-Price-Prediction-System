@@ -4,7 +4,7 @@ import sqlite3
 import hashlib
 
 app = Flask(__name__)
-app.secret_key = 'your-secret-key'  # Replace with strong key
+app.secret_key = 'secret-key'  # Replace with strong key
 CORS(app, supports_credentials=True)
 
 def get_db():
