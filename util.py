@@ -24,17 +24,6 @@ def get_estimated_price(location,sqft,bhk,bath):
 def get_location_names():
     return __locations
 
-def save_prediction_history(history):
-    with open('./prediction_history.json', 'w') as f:
-        json.dump(history, f)
-
-def load_prediction_history():
-    try:
-        with open('prediction_history.json', 'r') as f:
-            return json.load(f)
-    except FileNotFoundError:
-        return []
-
 def load_saved_artifacts():
     print("Loading Saved Artifacts.... Starts")
     global __data_columns
@@ -47,11 +36,6 @@ def load_saved_artifacts():
     global __model
     with open("./house_prices_model.pickle",'rb') as f:
         __model = pickle.load(f)
-
-    global prediction_history
-    prediction_history = load_prediction_history()
-    
-    print("Loading Saved Artifacts.... Done")
 
 if __name__ == '__main__':
     load_saved_artifacts()
