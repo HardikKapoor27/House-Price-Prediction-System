@@ -10,6 +10,19 @@ app.secret_key = 'your-secret-key'
 CORS(app, supports_credentials=True, origins=["https://hardikkapoor27.github.io"])
 load_saved_artifacts()  # Load model & data columns
 
+@app.before_request
+def handle_options():
+    if request.method == 'OPTIONS':
+        response = app.make_default_options_response()
+        headers = response.headers
+
+        headers['Access-Control-Allow-Origin'] = 'https://hardikkapoor27.github.io'
+        headers['Access-Control-Allow-Credentials'] = 'true'
+        headers['Access-Control-Allow-Headers'] = 'Content-Type'
+        headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
+        
+        return response
+
 # ----------- Helper Functions -----------
 def get_db():
     conn = sqlite3.connect('database.db')
