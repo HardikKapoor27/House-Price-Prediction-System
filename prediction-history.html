@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Prediction History</title>
+  <link rel="stylesheet" href="app.css" />
+</head>
+<body>
+  <div class="background"></div>
+  <nav class="navbar">
+    <div class="nav-left">
+      <img src="logo.png" alt="House Logo" class="logo">
+      <h1 class="nav-title">House Price Predictor</h1>
+    </div>
+    <div class="nav-right" id="nav-buttons"></div>
+  </nav>
+
+  <div class="container">
+    <h2>Your Prediction History</h2>
+    <div id="history-list">Loading...</div>
+    <h3>Feature Importance (Sample)</h3>
+    <img src="feature_importance.png" alt="Feature Importance Graph" style="max-width: 100%; border: 1px solid #ccc;" />
+  </div>
+
+  <script src="auth-navbar.js"></script>
+  <script>
+    fetch('https://house-price-prediction-system-503i.onrender.com/history', {
+      method: 'GET',
+      credentials: 'include'
+    })
+    .then(res => res.json())
+    .then(data => {
+      const container = document.getElementById('history-list');
+      if (data.status === 'success') {
+        if (data.history.length === 0) {
+          container.innerHTML = '<p>No predictions yet.</p>';
+        } else {
+          container.innerHTML = '<ul>' + data.history.map(item =>
+            `<li>Location: ${item.location}, BHK: ${item.bhk}, Bath: ${item.bath}, Sqft: ${item.sqft}, Predicted Price: ₹${item.price}</li>`
+          ).join('') + '</ul>';
+        }
+      } else {
+        alert('Please log in to view prediction history.');
+        window.location.href = 'login.html';
+      }
+    });
+  </script>
+</body>
+</html>
