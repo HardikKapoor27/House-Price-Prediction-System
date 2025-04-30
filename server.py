@@ -1,108 +1,104 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, session
 from flask_cors import CORS
-
-import util
+import sqlite3
+import hashlib
 
 app = Flask(__name__)
-users_db = {}
-prediction_history = []
+app.secret_key = 'your-secret-key'  # Replace with strong key
+CORS(app, supports_credentials=True)
 
-CORS(app, resources={r"/*": {"origins": "https://hardikkapoor27.github.io"}})
+def get_db():
+    conn = sqlite3.connect('database.db')
+    conn.row_factory = sqlite3.Row
+    return conn
 
-@app.route('/get_location_names')
-def get_location_names():
-    response = jsonify({
-        'locations': util.get_location_names()
-    })
-    return response
+def hash_password(password):
+    return hashlib.sha256(password.encode()).hexdigest()
 
-@app.route('/predict_house_price', methods=['POST'])
-def predict_house_price():
-    total_sqft = float(request.form['total_sqft'])
-    location = request.form['location']
-    bhk = int(request.form['bhk'])
-    bath = int(request.form['bath'])
-    estimated_price = util.get_estimated_price(location, total_sqft, bhk, bath)
-
-    prediction = {
-        'location': location,
-        'total_sqft': total_sqft,
-        'bhk': bhk,
-        'bath': bath,
-        'estimated_price': estimated_price
-    }
-
-    return jsonify({'estimated_price': estimated_price})
-
-def get_account_info():
-    data = request.json
-    email = data.get("email")
-
-    user = users_db.get(email)
-    if user:
-        return jsonify({
-            "success": True,
-            "email": user["email"],
-            "password": user["password"],
-            "history": user.get("history", [])
-        })
-    else:
-        return jsonify({"success": False, "message": "User not found"}), 404
-
-@app.route('/get_prediction_history', methods=['POST'])
-def get_prediction_history():
-    data = request.json
-    email = data.get("email")
-
-    user = users_db.get(email)
-    if user:
-        history = user.get("history", [])
-        return jsonify({"success": True, "prediction_history": history})
-    else:
-        return jsonify({"success": False, "message": "User not found"}), 404
-
-@app.route("/register", methods=["POST"])
+@app.route('/register', methods=['POST'])
 def register():
-    data = request.json
-    email = data.get("email")
-    password = data.get("password")
+    data = request.get_json()
+    name = data['name']
+    email = data['email']
+    password = hash_password(data['password'])
+    
+    conn = get_db()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("INSERT INTO users (name, email, password) VALUES (?, ?, ?)", (name, email, password))
+        conn.commit()
+        return jsonify({'status': 'success'})
+    except sqlite3.IntegrityError:
+        return jsonify({'status': 'error', 'message': 'Email already exists'})
+    finally:
+        conn.close()
 
-    if not email or not password:
-        return jsonify({"success": False, "message": "Missing email or password"}), 400
-
-    if email in users_db:
-        return jsonify({"success": False, "message": "User already exists"}), 409
-
-    users_db[email] = {"email": email, "password": password}
-    return jsonify({"success": True, "message": "Registered successfully"}), 200
-
-
-@app.route("/login", methods=["POST"])
+@app.route('/login', methods=['POST'])
 def login():
-    data = request.json
-    email = data.get("email")
-    password = data.get("password")
+    data = request.get_json()
+    email = data['email']
+    password = hash_password(data['password'])
 
-    if not email or not password:
-        return jsonify({"success": False, "message": "Missing email or password"}), 400
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM users WHERE email = ? AND password = ?", (email, password))
+    user = cursor.fetchone()
+    conn.close()
 
-    user = users_db.get(email)
-    if user and user["password"] == password:
-        return jsonify({"success": True, "message": "Login successful", "email": user["email"]}), 200
+    if user:
+        session['user_id'] = user['id']
+        session['email'] = user['email']
+        session['name'] = user['name']
+        return jsonify({'status': 'success', 'name': user['name'], 'email': user['email']})
     else:
-        return jsonify({"success": False, "message": "Invalid credentials"}), 401
+        return jsonify({'status': 'error', 'message': 'Invalid credentials'})
 
-@app.before_request
-def before_request():
-    if request.method == "OPTIONS":
-        response = app.make_response('')
-        response.headers['Access-Control-Allow-Methods'] = 'POST, GET, OPTIONS'
-        response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
-        return response
+@app.route('/logout', methods=['POST'])
+def logout():
+    session.clear()
+    return jsonify({'status': 'success'})
 
-if __name__ == "__main__":
-    print("Starting Python Flask Server For House Price Prediction....")
-    util.load_saved_artifacts()
-    import os
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port, debug=True)
+@app.route('/account', methods=['GET'])
+def account():
+    if 'user_id' not in session:
+        return jsonify({'status': 'error', 'message': 'Not logged in'}), 401
+    return jsonify({
+        'status': 'success',
+        'user': {
+            'name': session['name'],
+            'email': session['email']
+        }
+    })
+
+@app.route('/save-prediction', methods=['POST'])
+def save_prediction():
+    if 'user_id' not in session:
+        return jsonify({'status': 'error', 'message': 'Unauthorized'}), 401
+    data = request.get_json()
+    input_data = data['input_data']
+    predicted_price = data['predicted_price']
+    user_id = session['user_id']
+
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO predictions (user_id, input_data, predicted_price) VALUES (?, ?, ?)", 
+                   (user_id, input_data, predicted_price))
+    conn.commit()
+    conn.close()
+
+    return jsonify({'status': 'success'})
+
+@app.route('/prediction-history', methods=['GET'])
+def prediction_history():
+    if 'user_id' not in session:
+        return jsonify({'status': 'error', 'message': 'Unauthorized'}), 401
+    user_id = session['user_id']
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM predictions WHERE user_id = ? ORDER BY timestamp DESC", (user_id,))
+    predictions = [dict(row) for row in cursor.fetchall()]
+    conn.close()
+    return jsonify({'status': 'success', 'predictions': predictions})
+
+if __name__ == '__main__':
+    app.run(debug=True)
