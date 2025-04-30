@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify, session
 from flask_cors import CORS
 import sqlite3
 import hashlib
+SameSite=None; Secure=true
 from util import get_estimated_price, get_location_names, load_saved_artifacts
 
 app = Flask(__name__)
