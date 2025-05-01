@@ -8,23 +8,25 @@
 </head>
 <body>
   <div class="background"></div>
+
   <nav class="navbar">
     <div class="nav-left">
       <img src="logo.png" alt="House Logo" class="logo">
       <h1 class="nav-title">House Price Predictor</h1>
     </div>
-    <div id="nav-right" class="nav-right" id="nav-buttons"></div>
+    <div id="nav-right" class="nav-right"></div>
   </nav>
   <script src="auth-navbar.js"></script>
+
   <div class="container">
     <h2>Account Details</h2>
+    <p><strong>Name:</strong> <span id="user-name">Loading...</span></p>
     <p><strong>Email:</strong> <span id="user-email">Loading...</span></p>
     
     <button onclick="window.location.href='prediction-history.html'" class="cta-button">View Prediction History</button>
     <button onclick="logout()" class="cta-button">Logout</button>
   </div>
 
-  <script src="auth-navbar.js"></script>
   <script>
     fetch('https://house-price-prediction-system-503i.onrender.com/account', {
       method: 'GET',
@@ -33,10 +35,11 @@
     .then(res => res.json())
     .then(data => {
       if (data.status === 'success') {
+        document.getElementById('user-name').textContent = data.user.name;
         document.getElementById('user-email').textContent = data.user.email;
       } else {
         alert('Please log in to view your account.');
-        window.location.href = 'login.html';
+        window.location.href = 'auth.html';
       }
     });
 
