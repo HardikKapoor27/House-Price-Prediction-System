@@ -122,12 +122,17 @@ def prediction_history():
 @app.route('/predict_home_price', methods=['POST'])
 def predict_home_price():
     data = request.get_json()
-    location = data['location']
-    sqft = float(data['sqft'])
-    bhk = int(data['bhk'])
-    bath = int(data['bath'])
+    if not data:
+        return jsonify({'error': 'Invalid input format'}), 400
 
-    estimated_price = get_estimated_price(location, sqft, bhk, bath)
+    try:
+        total_sqft = float(data['total_sqft'])
+        bhk = int(data['bhk'])
+        bath = int(data['bath'])
+        location = data['location']
+    except (KeyError, ValueError) as e:
+        return jsonify({'error': 'Invalid input values'}), 400
+
     return jsonify({'estimated_price': estimated_price})
 
 @app.route('/get_location_names', methods=['GET'])
