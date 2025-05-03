@@ -45,6 +45,30 @@ function getBathValue() {
   .then(data => {
     console.log(data.estimated_price);
     estPrice.innerHTML = "<h2>" + data.estimated_price.toString() + " Lakh</h2>";
+ // ✅ Auto-save prediction
+    fetch('https://house-price-prediction-system-503i.onrender.com/save-prediction', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        input_data: JSON.stringify({
+          location: location.value,
+          total_sqft: parseFloat(sqft.value),
+          bhk: bhk,
+          bath: bathrooms
+        }),
+        predicted_price: data.estimated_price
+      })
+    })
+    .then(res => res.json())
+    .then(saveData => {
+      if (saveData.status !== 'success') {
+        console.error("Prediction save failed");
+      }
+    })
+    .catch(err => {
+      console.error("Error saving prediction:", err);
+    });
   })
   .catch(error => {
     console.error("Error:", error);
