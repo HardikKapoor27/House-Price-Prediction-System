@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify, session
 from flask_cors import CORS
 import sqlite3
 import hashlib
+import json
 from util import get_estimated_price, get_location_names, load_saved_artifacts
 from database import create_tables
 from flask.sessions import SecureCookieSessionInterface
@@ -118,30 +119,33 @@ def save_prediction():
 
     return jsonify({'status': 'success'})
 
+import json
+
 @app.route('/prediction-history', methods=['GET'])
+@login_required
 def prediction_history():
-    if 'user_id' not in session:
-        return jsonify({'status': 'error', 'message': 'Unauthorized'}), 401
-    user_id = session['user_id']  
-    conn = get_db()
+    user_id = session['user_id']
+    conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM predictions WHERE user_id = ? ORDER BY timestamp DESC", (user_id,))
-    predictions = cursor.fetchall()
+
+    cursor.execute("SELECT input_data, predicted_price, timestamp FROM predictions WHERE user_id = ?", (user_id,))
+    rows = cursor.fetchall()
+
+    predictions = []
+    for row in rows:
+        input_data = json.loads(row[0])  # row[0] is input_data JSON string
+        predictions.append({
+            'location': input_data.get('location'),
+            'total_sqft': input_data.get('total_sqft'),
+            'bhk': input_data.get('bhk'),
+            'bath': input_data.get('bath'),
+            'predicted_price': row[1],
+            'timestamp': row[2]
+        })
+
     conn.close()
 
-    # Convert results to a list of dictionaries
-    predictions_list = []
-    for row in predictions:
-        predictions_list.append({
-            'location': row[2],  # input_data location
-            'total_sqft': row[3],  # input_data total_sqft
-            'bhk': row[4],  # input_data bhk
-            'bath': row[5],  # input_data bath
-            'predicted_price': row[6],  # predicted_price
-            'timestamp': row[7]  # timestamp
-        })
-    
-    return jsonify({'status': 'success', 'predictions': predictions_list})
+    return jsonify({'status': 'success', 'predictions': predictions})
 
 # ----------- ML Prediction API -----------
 @app.route('/predict_home_price', methods=['POST'])
