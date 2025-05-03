@@ -8,7 +8,7 @@ from flask.sessions import SecureCookieSessionInterface
 
 app = Flask(__name__)
 app.secret_key = 'your-secret-key'
-CORS(app, supports_credentials=True, origins=["https://hardikkapoor27.github.io"])
+CORS(app, supports_credentials=True, origins=["https://hardikkapoor27.github.io"],resources={r"/prediction-history": {"origins": "https://hardikkapoor27.github.io"}})
 load_saved_artifacts()  # Load model & data columns
 app.config.update(
     SESSION_COOKIE_SAMESITE='None',
