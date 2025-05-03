@@ -3,6 +3,7 @@ from flask_cors import CORS
 import sqlite3
 import hashlib
 from util import get_estimated_price, get_location_names, load_saved_artifacts
+from database import create_tables
 
 app = Flask(__name__)
 app.secret_key = 'your-secret-key'
@@ -130,10 +131,11 @@ def predict_home_price():
         bhk = int(data['bhk'])
         bath = int(data['bath'])
         location = data['location']
+        estimated_price = get_estimated_price(location, total_sqft, bhk, bath)  # <- MISSING!
+        return jsonify({'estimated_price': estimated_price})
     except (KeyError, ValueError) as e:
         return jsonify({'error': 'Invalid input values'}), 400
 
-    return jsonify({'estimated_price': estimated_price})
 
 @app.route('/get_location_names', methods=['GET'])
 def get_location_names_api():
@@ -150,6 +152,7 @@ def after_request(response):
 
 # ----------- Run the App -----------
 if __name__ == '__main__':
+    create_tables()
     print("Starting Python Flask Server For House Price Prediction....")
     import os
     port = int(os.environ.get("PORT", 5000))
