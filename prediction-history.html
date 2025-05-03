@@ -5,6 +5,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Prediction History</title>
   <link rel="stylesheet" href="app.css" />
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      font-family: Arial, sans-serif;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: center;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+  </style>
 </head>
 <body>
   <div class="background"></div>
@@ -15,6 +34,7 @@
     </div>
     <div id="nav-right" class="nav-right"></div>
   </nav>
+
   <script src="auth-navbar.js"></script>
   
   <div class="content">
@@ -24,44 +44,56 @@
     <img src="feature_importance.png" alt="Feature Importance Graph" style="max-width: 100%; border: 1px solid #ccc;" />
   </div>
 
-  <script src="auth-navbar.js"></script>
   <script>
-  fetch('https://house-price-prediction-system-503i.onrender.com/prediction-history', {
-    method: 'GET',
-    credentials: 'include'  // To include session cookie
-  })
-  .then(res => res.json())
-  .then(data => {
-    const container = document.getElementById('history-list');
-    if (data.status === 'success') {
-      if (data.predictions.length === 0) {
-        container.innerHTML = '<p>No predictions yet.</p>';
-      } else {
-        let tableContent = '<table><tr><th>Location</th><th>Sqft</th><th>BHK</th><th>Bath</th><th>Predicted Price</th><th>Timestamp</th></tr>';
-        
-        data.predictions.forEach(item => {
+    fetch('https://house-price-prediction-system-503i.onrender.com/prediction-history', {
+      method: 'GET',
+      credentials: 'include'
+    })
+    .then(res => res.json())
+    .then(data => {
+      const container = document.getElementById('history-list');
+      if (data.status === 'success') {
+        if (data.predictions.length === 0) {
+          container.innerHTML = '<p>No predictions yet.</p>';
+        } else {
+          let tableContent = `
+            <table>
+              <thead>
+                <tr>
+                  <th>Location</th>
+                  <th>Sqft</th>
+                  <th>BHK</th>
+                  <th>Bath</th>
+                  <th>Predicted Price</th>
+                  <th>Timestamp</th>
+                </tr>
+              </thead>
+              <tbody>
+          `;
+          data.predictions.forEach(item => {
+            tableContent += `
+              <tr>
+                <td>${item.location}</td>
+                <td>${item.total_sqft}</td>
+                <td>${item.bhk}</td>
+                <td>${item.bath}</td>
+                <td>${item.predicted_price} Lakh</td>
+                <td>${item.timestamp}</td>
+              </tr>`;
+          });
           tableContent += `
-            <tr>
-              <td>${item.location}</td>
-              <td>${item.total_sqft}</td>
-              <td>${item.bhk}</td>
-              <td>${item.bath}</td>
-              <td>${item.predicted_price} Lakh</td>
-              <td>${item.timestamp}</td>
-            </tr>`;
-        });
-        
-        tableContent += '</table>';
-        container.innerHTML = tableContent;
+              </tbody>
+            </table>`;
+          container.innerHTML = tableContent;
+        }
+      } else {
+        alert('Please log in to view prediction history.');
+        window.location.href = 'login.html';
       }
-    } else {
-      alert('Please log in to view prediction history.');
-      window.location.href = 'login.html';
-    }
-  })
-  .catch(error => {
-    console.error("Error:", error);
-  });
-</script>
+    })
+    .catch(error => {
+      console.error("Error:", error);
+    });
+  </script>
 </body>
 </html>
