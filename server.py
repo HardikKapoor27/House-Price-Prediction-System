@@ -4,11 +4,22 @@ import sqlite3
 import hashlib
 from util import get_estimated_price, get_location_names, load_saved_artifacts
 from database import create_tables
+from flask.sessions import SecureCookieSessionInterface
 
 app = Flask(__name__)
 app.secret_key = 'your-secret-key'
 CORS(app, supports_credentials=True, origins=["https://hardikkapoor27.github.io"])
 load_saved_artifacts()  # Load model & data columns
+app.config.update(
+    SESSION_COOKIE_SAMESITE='None',
+    SESSION_COOKIE_SECURE=True
+)
+
+class CustomSessionInterface(SecureCookieSessionInterface):
+    def save_session(self, *args, **kwargs):
+        super().save_session(*args, **kwargs)
+
+app.session_interface = CustomSessionInterface()
 
 @app.before_request
 def handle_options():
