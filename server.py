@@ -122,7 +122,6 @@ def save_prediction():
 import json
 
 @app.route('/prediction-history', methods=['GET'])
-@login_required
 def prediction_history():
     user_id = session['user_id']
     conn = sqlite3.connect('database.db')
