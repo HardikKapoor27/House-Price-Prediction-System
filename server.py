@@ -122,13 +122,26 @@ def save_prediction():
 def prediction_history():
     if 'user_id' not in session:
         return jsonify({'status': 'error', 'message': 'Unauthorized'}), 401
-    user_id = session['user_id']
+    user_id = session['user_id']  
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM predictions WHERE user_id = ? ORDER BY timestamp DESC", (user_id,))
-    predictions = [dict(row) for row in cursor.fetchall()]
+    predictions = cursor.fetchall()
     conn.close()
-    return jsonify({'status': 'success', 'predictions': predictions})
+
+    # Convert results to a list of dictionaries
+    predictions_list = []
+    for row in predictions:
+        predictions_list.append({
+            'location': row[2],  # input_data location
+            'total_sqft': row[3],  # input_data total_sqft
+            'bhk': row[4],  # input_data bhk
+            'bath': row[5],  # input_data bath
+            'predicted_price': row[6],  # predicted_price
+            'timestamp': row[7]  # timestamp
+        })
+    
+    return jsonify({'status': 'success', 'predictions': predictions_list})
 
 # ----------- ML Prediction API -----------
 @app.route('/predict_home_price', methods=['POST'])
