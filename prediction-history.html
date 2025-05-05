@@ -53,11 +53,20 @@
   <script>
     // Convert UTC to IST
     function convertToIST(timestamp) {
-      var date = new Date(timestamp);
-      var istOffset = 5.5 * 60; // IST is UTC + 5:30 hours
-      date.setMinutes(date.getMinutes() + date.getTimezoneOffset() + istOffset); // Adjust time to IST
-      return date.toISOString().slice(0, 19).replace('T', ' '); // Format as YYYY-MM-DD HH:MM:SS
-    }
+  var date = new Date(timestamp);
+  
+  // IST is UTC + 5:30 hours
+  var istOffset = 5.5 * 60; 
+
+  // Get the UTC offset in minutes
+  var localOffset = date.getTimezoneOffset();
+  
+  // Adjust time to IST (remove local timezone offset and apply IST offset)
+  date.setMinutes(date.getMinutes() + localOffset + istOffset);
+  
+  return date.toISOString().slice(0, 19).replace('T', ' '); // Format as YYYY-MM-DD HH:MM:SS
+}
+
 
     fetch('https://house-price-prediction-system-503i.onrender.com/prediction-history', {
       method: 'GET',
