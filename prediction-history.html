@@ -51,6 +51,14 @@
   </div>
 
   <script>
+    // Convert UTC to IST
+    function convertToIST(timestamp) {
+      var date = new Date(timestamp);
+      var istOffset = 5.5 * 60; // IST is UTC + 5:30 hours
+      date.setMinutes(date.getMinutes() + date.getTimezoneOffset() + istOffset); // Adjust time to IST
+      return date.toISOString().slice(0, 19).replace('T', ' '); // Format as YYYY-MM-DD HH:MM:SS
+    }
+
     fetch('https://house-price-prediction-system-503i.onrender.com/prediction-history', {
       method: 'GET',
       credentials: 'include'
@@ -78,6 +86,7 @@
               <tbody>
           `;
           data.predictions.forEach(item => {
+            let timestamp = convertToIST(item.timestamp); // Convert timestamp to IST
             tableContent += `
               <tr>
                 <td>${item.location}</td>
@@ -85,7 +94,7 @@
                 <td>${item.bhk}</td>
                 <td>${item.bath}</td>
                 <td>${item.predicted_price} Lakh</td>
-                <td>${item.timestamp}</td>
+                <td>${timestamp}</td>
               </tr>`;
           });
           tableContent += `
@@ -103,47 +112,47 @@
     });
 
   // Download CSV
-document.getElementById('download-csv').addEventListener('click', function () {
-  if (!window.predictionData || predictionData.length === 0) return alert("No data to download");
+  document.getElementById('download-csv').addEventListener('click', function () {
+    if (!window.predictionData || predictionData.length === 0) return alert("No data to download");
 
-  const csvRows = [
-    ["Location", "Sqft", "BHK", "Bath", "Predicted Price", "Timestamp"],
-    ...window.predictionData.map(row => [
-      row.location, row.total_sqft, row.bhk, row.bath, row.predicted_price + " Lakh", row.timestamp
-    ])
-  ];
+    const csvRows = [
+      ["Location", "Sqft", "BHK", "Bath", "Predicted Price", "Timestamp"],
+      ...window.predictionData.map(row => [
+        row.location, row.total_sqft, row.bhk, row.bath, row.predicted_price + " Lakh", convertToIST(row.timestamp) // Convert timestamp
+      ])
+    ];
 
-  const csvContent = csvRows.map(e => e.join(",")).join("\n");
-  const blob = new Blob([csvContent], { type: 'text/csv' });
-  const url = window.URL.createObjectURL(blob);
+    const csvContent = csvRows.map(e => e.join(",")).join("\n");
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
 
-  const a = document.createElement('a');
-  a.setAttribute('href', url);
-  a.setAttribute('download', 'prediction_history.csv');
-  a.click();
-});
-
-// Download PDF
-document.getElementById('download-pdf').addEventListener('click', function () {
-  if (!window.predictionData || predictionData.length === 0) return alert("No data to download");
-
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
-
-  doc.text("Prediction History", 14, 15);
-  const headers = [["Location", "Sqft", "BHK", "Bath", "Predicted Price", "Timestamp"]];
-  const rows = window.predictionData.map(row => [
-    row.location, row.total_sqft, row.bhk, row.bath, row.predicted_price + " Lakh", row.timestamp
-  ]);
-
-  doc.autoTable({
-    head: headers,
-    body: rows,
-    startY: 20
+    const a = document.createElement('a');
+    a.setAttribute('href', url);
+    a.setAttribute('download', 'prediction_history.csv');
+    a.click();
   });
 
-  doc.save("prediction_history.pdf");
-});
-  </script>
+  // Download PDF
+  document.getElementById('download-pdf').addEventListener('click', function () {
+    if (!window.predictionData || predictionData.length === 0) return alert("No data to download");
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    doc.text("Prediction History", 14, 15);
+    const headers = [["Location", "Sqft", "BHK", "Bath", "Predicted Price", "Timestamp"]];
+    const rows = window.predictionData.map(row => [
+      row.location, row.total_sqft, row.bhk, row.bath, row.predicted_price + " Lakh", convertToIST(row.timestamp) // Convert timestamp
+    ]);
+
+    doc.autoTable({
+      head: headers,
+      body: rows,
+      startY: 20
+    });
+
+    doc.save("prediction_history.pdf");
+  });
+</script>
 </body>
 </html>
